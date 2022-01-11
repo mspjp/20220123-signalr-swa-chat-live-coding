@@ -42,3 +42,8 @@ CLIでyarn devの挙動を確認
 SWAへのデプロイ
 
 ## 参考資料
+
+- [Azure Functions における SignalR サービスのバインド](https://docs.microsoft.com/ja-jp/azure/azure-functions/functions-bindings-signalr-service)
+- [Azure SignalRサービスドキュメント](https://docs.microsoft.com/ja-jp/azure/azure-signalr/signalr-overview)
+- [Vite](https://ja.vitejs.dev/)
+- [Azure Static Web Apps CLI](https://github.com/Azure/static-web-apps-cli)
