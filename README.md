@@ -411,7 +411,16 @@ export const useMessages = () => {
 
 ### Azure Static Web Appsにデプロイ
 
-SWAへのデプロイ
+<!-- SWAへのデプロイ -->
+
+最後にAzure SWAへデプロイしましょう。
+ここですることは二つだけです。
+
+1. GitHubへpush
+2. Azure SWAリソースの作成
+
+まずは現状のコードを丸々GitHubの任意のリポジトリにpushします。
+リポジトリはPrivateでも問題ないです。
 
 ## 参考資料
 
