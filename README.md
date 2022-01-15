@@ -414,10 +414,11 @@ export const useMessages = () => {
 <!-- SWAへのデプロイ -->
 
 最後にAzure SWAへデプロイしましょう。
-ここですることは二つだけです。
+ここでは次のようなことをします。
 
 1. GitHubへpush
 2. Azure SWAリソースの作成
+3. 接続文字列の設定
 
 まずは現状のコードを丸々GitHubの任意のリポジトリにpushします。
 リポジトリはPrivateでも問題ないです。
