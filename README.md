@@ -236,6 +236,72 @@ Azure Portalから取得できる接続文字列を追記しましょう。
 Azure Functionsを再起動すると
 `/negotiate`エンドポイントが追加されているはずです。
 
+次にPOSTリクエストに応じて
+SignalRクライアントに通知を送るHTTPトリガーを作成しましょう。
+
+HTTPトリガー関数を追加して、`sendMessage`という名前にします。
+作成出来たら`/api/sendMessage/function.json`というファイルができているはずなので、
+こちらにSignalRの出力バインディングを追加します。
+できればhttpリクエストはPOSTだけ受け付けるようにしておくのがベターでしょう。
+
+```json :function.json
+{
+  "bindings": [
+    {
+      "authLevel": "anonymous",
+      "type": "httpTrigger",
+      "direction": "in",
+      "name": "req",
+      "methods": ["post"]
+    },
+    {
+      "type": "http",
+      "direction": "out",
+      "name": "res"
+    },
+    {
+      // ここからを追加
+      "type": "signalR",
+      "name": "signalRMessages",
+      "hubName": "default",
+      "connectionStringSetting": "AzureSignalRConnectionString",
+      "direction": "out"
+    }
+  ],
+  "scriptFile": "../dist/sendMessage/index.js"
+}
+```
+
+次に`/api/sendMessage/index.ts`を編集して、
+次のようにします。
+
+```ts :index.ts
+import { AzureFunction, Context, HttpRequest } from "@azure/functions";
+
+const httpTrigger: AzureFunction = async function (
+  context: Context,
+  req: HttpRequest
+): Promise<void> {
+  if (!req.body.text) {
+    context.bindings.signalRMessages = [
+      {
+        target: "newMessage",
+        arguments: [req.body.text],
+      },
+    ];
+  }
+  context.done();
+};
+
+export default httpTrigger;
+```
+
+この関数ではbodyに`{text:xxx}`があるかどうかのバリデーションを設けているので
+クライアントでPOSTするときはこの仕様を守るようにします。
+
+ここまで作ってまたFunctionsを起動してみると、
+`sendMessage`APIが追加されているのがわかります。
+
 ### SignalR クライアントの実装
 
 `@microsoft/signalr`を用いてメッセージ受信
