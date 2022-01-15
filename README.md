@@ -13,11 +13,27 @@
 
 ## 手順
 
-### Azure SignalR Serviceリソースの作成
+### 1. Azure SignalR Serviceリソースの作成
+
+まず初めにSignalRのリソースをAzure Portalで作成します。
+検索バーで「signalr」と検索してでてくる項目をクリックすれば
+そこから作成することができます。
+
+![img](images/serch-signalr.png)
+
+作成ボタンを押してリソースの設定をしていきます。
+リソースグループは新規作成か既存のものを使用して、
+リソース名に全世界で一意の名前を付けます。
+リージョンはなるべく近い場所に指定することがベターです。
+今回のデモでは価格レベルはfreeプランでも問題ありません。
+
+ここでサービスモードですが、**「Serverless」にしてください**。
+後で変更もできますが、Azure Functionsとバインドするためには
+この設定が必須です。
 
 ![img](images/signalr-settings.png)
 
-### ローカルプロジェクトの初期化
+### 2. ローカルプロジェクトの初期化
 
 <!-- viteコマンドを使ってプロジェクトを作成 -->
 <!-- yarn devで起動確認 -->
@@ -52,9 +68,12 @@ yarn dev
 ```
 
 `localhost:3000`にアクセスして次のような画面が出れば成功です。
+
+![img](images/hello-vite.png)
+
 画面が見えたらいったんdevサーバを`Ctrl+C`で落としましょう。
 
-### CLIを使ったStatic Web Appsのエミュレーション
+### 3. CLIを使ったStatic Web Appsのエミュレーション
 
 <!-- CLIでyarn devの挙動を確認 -->
 
@@ -86,7 +105,7 @@ devサーバを立ち上げた状態でエミュレーションしてもよい�
 成功です。
 そしてまたdevサーバを落としましょう。
 
-### Azure Functionsの作成とエミュレーション
+### 4. Azure Functionsの作成とエミュレーション
 
 <!-- `/api/hello`を作って通信を確認 -->
 
@@ -95,6 +114,8 @@ devサーバを立ち上げた状態でエミュレーションしてもよい�
 プロジェクトルートに`/api/`というフォルダを作成し、
 そこにAzure Functions拡張機能でFunctionsを初期化します。
 この時プロジェクトルートで初期化しないように気を付けてください。
+
+![img](images/functions-brows.png)
 
 初期化出来たら試しにHTTPトリガー関数を追加してみます。
 今回はTypeScriptで`/api/hello`というエンドポイントに作成します。
@@ -109,7 +130,8 @@ npm install
 ```
 
 現時点ではこのような画面になってるのではないでしょうか。
-<!-- vscodeの画像がここに -->
+
+![img](images/vscode-view-functions.png)
 
 `/api/hello/index.ts`を編集して、
 任意のリクエストに対して
@@ -150,7 +172,7 @@ export default httpTrigger;
 動いているのが確認できます。
 この関数は起動したままにしておきましょう。
 
-<!-- ここに画像 -->
+![img](images/hello-api.png)
 
 それでは関数もSWA CLIでエミュレートしてみましょう。
 また`package.json`に起動スクリプトを作成します。
@@ -200,9 +222,9 @@ SWA CLIでエミュレートされている間はホットリロードが有効�
 ファイルを保存すれば即時に結果がは反映されているはずです。
 次のような画面が表示されていれば成功でしょう。
 
-<!-- ここに画像 -->
+![img](images/hello-fetch.png)
 
-### SignalR Service関連のAzure Functionsを作成
+### 5. SignalR Service関連のAzure Functionsを作成
 
 <!-- `/api/negotiate`と`/api/sendMessage`を作る -->
 
@@ -217,12 +239,15 @@ vscodeのコマンドパレットでsignalrと検索すると
 negotiate関数を作成するオプションが出てきます。
 出てこない場合には一番下の
 change template filterでAllを選択すると出てきます。
+
+![img](images/serch-negotiate.png)
+
 実行すると自動でコードが追加されますが、
 接続情報がまだないので動作しません。
 `/api/negotiate/local.settings.json`の中に
 Azure Portalから取得できる接続文字列を追記しましょう。
 
-<!-- ここに画像 -->
+![img](images/signalr-connectionstring.png)
 
 ```json :local.settings.json
 {
@@ -304,7 +329,7 @@ export default httpTrigger;
 ここまで作ってまたFunctionsを起動してみると、
 `sendMessage`APIが追加されているのがわかります。
 
-### SignalR クライアントの実装
+### 6. SignalR クライアントの実装
 
 <!-- `@microsoft/signalr`を用いてメッセージ受信 -->
 
@@ -409,9 +434,9 @@ export const useMessages = () => {
 インプットボックスに文字を打って、sendボタンを押すとメッセージを送信できます。
 タブを2個開いて確認するとわかりやすいでしょう。
 
-<!-- ここに画像 -->
+![img](images/chat-view.png)
 
-### Azure Static Web Appsにデプロイ
+### 7. Azure Static Web Appsにデプロイ
 
 <!-- SWAへのデプロイ -->
 
