@@ -17,8 +17,39 @@
 
 ### ローカルプロジェクトの初期化
 
-viteコマンドを使ってプロジェクトを作成
-yarn devで起動確認
+<!-- viteコマンドを使ってプロジェクトを作成 -->
+<!-- yarn devで起動確認 -->
+
+まずは任意のディレクトリでターミナルを開き、
+次のコマンドを実行します。
+
+```
+yarn create vite serverless-chat-signalr --template vue-ts
+```
+
+`yarn create vite <app-name>`とすることで
+Viteのプロジェクトが初期化されます。
+オプションで`vue-ts`
+というテンプレートを指定するとTypeScriptでVue3を使った
+プロジェクトが選択されます。
+
+そのあと以下のコマンドで
+
+1. ディレクトリを移動
+2. 依存パッケージのインストール
+3. devサーバの起動
+
+を行います。
+
+```sh
+cd serverless-chat-signalr
+
+yarn
+
+yarn dev
+```
+
+`localhost:3000`にアクセスして次のような画面が出れば成功です。
 
 ### CLIを使ったStatic Web Appsのエミュレーション
 
