@@ -282,7 +282,7 @@ const httpTrigger: AzureFunction = async function (
   context: Context,
   req: HttpRequest
 ): Promise<void> {
-  if (!req.body.text) {
+  if (req.body.text) {
     context.bindings.signalRMessages = [
       {
         target: "newMessage",
@@ -304,7 +304,110 @@ export default httpTrigger;
 
 ### SignalR クライアントの実装
 
-`@microsoft/signalr`を用いてメッセージ受信
+<!-- `@microsoft/signalr`を用いてメッセージ受信 -->
+
+SignalRを使った通信をWebクライアントで実装する場合、
+`@microsoft/signalr`というnpmパッケージを使います。
+まずはこれをインストールしましょう。
+
+```sh
+yarn add @microsoft/signalr
+```
+
+そしてWebクライアントの実装をしていきます。
+UIなどの実装はお好きなように実装して構いませんので
+一例をお見せする感じにします。
+
+まずは`/src/components/HelloWorld.vue`
+を編集して次のようにします。
+
+```vue HelloWorld.vue
+<script setup lang="ts">
+import { ref } from "vue";
+import { HubConnectionBuilder } from "@microsoft/signalr";
+import { useMessages } from "../composables/useMessages";
+
+defineProps<{ msg: string }>();
+
+const txtMessage = ref("");
+
+const { pushMessage, reversedMessages } = useMessages();
+
+// signalr settings
+const connection = new HubConnectionBuilder().withUrl("/api").build();
+connection.start().then(() => {
+  connection.on("newMessage", (newMessage: string) => {
+    pushMessage(newMessage);
+  });
+});
+
+const onClick = () => {
+  fetch("/api/sendMessage", {
+    method: "POST",
+    body: JSON.stringify({
+      text: txtMessage.value,
+    }),
+  });
+  txtMessage.value = "";
+};
+</script>
+
+<template>
+  <h1>{{ msg }}</h1>
+
+  <div>
+    <div>
+      <input
+        type="text"
+        name="txtMessage"
+        id="txtMessage"
+        v-model="txtMessage"
+      />
+      <input type="button" value="send" @click="onClick" />
+    </div>
+
+    <div id="messagesWrapper">
+      <div v-for="(message, index) in reversedMessages" :key="index">
+        {{ message }}
+      </div>
+    </div>
+  </div>
+</template>
+```
+
+scriptタグの中では、
+
+- SignalRの設定
+- sendMessageへリクエストを送信するコールバック
+
+の二つを実装しています。
+またmessageに関しては、`/src/composables/useMessages.ts`
+にロジックを分けています。
+
+```ts :useMessages
+import { computed, reactive } from "vue";
+
+export const useMessages = () => {
+  const messages = reactive<string[]>([]);
+
+  const reversedMessages = computed(() => messages.slice().reverse());
+
+  const pushMessage = (msg: string) => {
+    messages.push(msg);
+  };
+
+  return {
+    reversedMessages,
+    pushMessage,
+  };
+};
+```
+
+さて実装ができたら動かしてみましょう。
+インプットボックスに文字を打って、sendボタンを押すとメッセージを送信できます。
+タブを2個開いて確認するとわかりやすいでしょう。
+
+<!-- ここに画像 -->
 
 ### Azure Static Web Appsにデプロイ
 
