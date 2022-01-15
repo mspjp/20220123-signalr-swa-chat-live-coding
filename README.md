@@ -202,8 +202,39 @@ SWA CLIでエミュレートされている間はホットリロードが有効�
 
 ### SignalR Service関連のAzure Functionsを作成
 
-`/api/negotiate`と`/api/sendMessage`を作る
-/apiにアクセスしてテスト
+<!-- `/api/negotiate`と`/api/sendMessage`を作る -->
+
+続いて、また/api以下を触りながら
+SignalRの関数を作成します。
+
+SignalRで通信するためには
+クライアントとサーバ間でコネクションを張る必要があり、
+まずはその接続情報を提供するAPIを作成します。
+
+vscodeのコマンドパレットでsignalrと検索すると
+negotiate関数を作成するオプションが出てきます。
+出てこない場合には一番下の
+change template filterでAllを選択すると出てきます。
+実行すると自動でコードが追加されますが、
+接続情報がまだないので動作しません。
+`/api/negotiate/local.settings.json`の中に
+Azure Portalから取得できる接続文字列を追記しましょう。
+
+<!-- ここに画像 -->
+
+```json :local.settings.json
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "",
+    "FUNCTIONS_WORKER_RUNTIME": "node",
+    "AzureSignalRConnectionString": "<接続文字列>" // ここを追加
+  }
+}
+```
+
+Azure Functionsを再起動すると
+`/negotiate`エンドポイントが追加されているはずです。
 
 ### SignalR クライアントの実装
 
